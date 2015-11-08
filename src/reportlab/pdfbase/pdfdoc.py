@@ -61,10 +61,11 @@ PDF_SUPPORT_VERSION = dict(     #map keyword to min version that supports it
 
 if isPy3:
     def pdfdocEnc(x):
-        return x.encode('extpdfdoc') if isinstance(x,str) else x
+        return x.encode('extpdfdoc') if isinstance(x, str) else x
 else:
     def pdfdocEnc(x):
-        return x.encode('extpdfdoc') if isinstance(x,unicode) else x
+        return x.encode('extpdfdoc') if isinstance(x, unicode) else x
+
 
 def format(element, document, toplevel=0):
     """Indirection step for formatting.
@@ -92,11 +93,13 @@ def format(element, document, toplevel=0):
     else:
         return pdfdocEnc(str(element))
 
+
 def xObjectName(externalname):
     return "FormXob.%s" % externalname
 
 # backwards compatibility
 formName = xObjectName
+
 
 # no encryption
 class NoEncryption:
@@ -113,12 +116,15 @@ class NoEncryption:
         # the representation of self in file if any (should be None or PDFDict)
         return None
 
+
 class PDFObject(object):
     pass
+
 
 class DummyDoc(PDFObject):
     "used to bypass encryption when required"
     encrypt = NoEncryption()
+
 
 ### the global document structure manager
 class PDFDocument(PDFObject):
@@ -239,6 +245,7 @@ class PDFDocument(PDFObject):
         # prepare outline
         self.Reference(self.Catalog)
         self.Reference(self.info)
+        # TODO: add here self.Reference(PDFStream(XMP DATA))
         outline = self.outline
         outline.prepare(self, canvas)
         return self.format()
@@ -1552,6 +1559,8 @@ class PDFInfo(PDFObject):
         D["Creator"] = PDFString(self.creator)
         D["Subject"] = PDFString(self.subject)
         D["Keywords"] = PDFString(self.keywords)
+        D["GTS_PDFXVersion"] = PDFString("PDF/X-4")
+        D["Trapped"] = "/False"
 
         PD = PDFDictionary(D)
         return PD.format(document)
